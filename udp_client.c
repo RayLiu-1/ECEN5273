@@ -66,7 +66,7 @@ int main (int argc, char * argv[])
 	struct sockaddr_in from_addr;
 	int addr_length = sizeof(struct sockaddr);
 	bzero(buffer,sizeof(buffer));
-	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&sockaddr_in, &addr_length) < 0)
+	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) < 0)
 	{
 		printf("unable to receive socket");
 	}
