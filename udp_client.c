@@ -46,11 +46,7 @@ int main (int argc, char * argv[])
 	{
 		printf("unable to create socket");
 	}
-
-	if( bind(sock, (struct sockaddr *)&remote, sizeof(remote))<0)
-	{
-		printf("unable to bind socket\n");
-	}
+	
 	/******************
 	  sendto() sends immediately.  
 	  it will report an error if the message fails to leave the computer
