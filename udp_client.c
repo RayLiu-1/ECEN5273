@@ -47,7 +47,7 @@ int main (int argc, char * argv[])
 		printf("unable to create socket");
 	}
 
-	if bind(sock, (struct sockaddr *)&remote, sizeof(remote))
+	if( bind(sock, (struct sockaddr *)&remote, sizeof(remote))<0)
 	{
 		printf("unable to bind socket\n");
 	}
@@ -57,7 +57,7 @@ int main (int argc, char * argv[])
 	  however, with UDP, there is no error if the message is lost in the network once it leaves the computer.
 	 ******************/
 	char command[] = "apple";	
-	if ((nbytes = sendto(sock,command,sizeod(command),0,(struct sockaddr*)&remote,sizeof(remote))) < 0)
+	if ((nbytes = sendto(sock,command,sizeof(command),0,(struct sockaddr*)&remote,sizeof(remote))) < 0)
 	{
 		printf("unable to send socket");
 	}
@@ -66,7 +66,7 @@ int main (int argc, char * argv[])
 	struct sockaddr_in from_addr;
 	int addr_length = sizeof(struct sockaddr);
 	bzero(buffer,sizeof(buffer));
-	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr_in *)&sockaddr_in, &addr_length) < 0)
+	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&sockaddr_in, &addr_length) < 0)
 	{
 		printf("unable to receive socket");
 	}
