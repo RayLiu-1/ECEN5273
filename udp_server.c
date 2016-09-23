@@ -42,7 +42,7 @@ int main (int argc, char * argv[] )
 
 
 	//Causes the system to create a generic socket of type UDP (datagram)
-	if ((sock = socket(PF_UNIX,SOCK_DGAM,IPPROTO_UDP)) < 0)
+	if ((sock = socket(PF_UNIX,SOCK_DGRAM,IPPROTO_UDP)) < 0)
 	{
 		printf("unable to create socket");
 	}
@@ -60,7 +60,7 @@ int main (int argc, char * argv[] )
 
 	//waits for an incoming message
 	bzero(buffer,sizeof(buffer));
-	if (nbytes = recvrom(sock, (char *buffer)&buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
+	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
 	{
 		printf("unable to receive socket\n");
 	}
@@ -68,7 +68,7 @@ int main (int argc, char * argv[] )
 	printf("The client says %s\n", buffer);
 
 	char msg[] = "orange";
-	if ((nbytes = sendto(sock, msg, sizeod(msg),0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+	if ((nbytes = sendto(sock, msg, sizeof(msg),0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 	{
 		printf("unable to send socket");
 	}
