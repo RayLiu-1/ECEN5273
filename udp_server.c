@@ -42,7 +42,7 @@ int main (int argc, char * argv[] )
 
 
 	//Causes the system to create a generic socket of type UDP (datagram)
-	if ((sock = socket(PF_UNIX,SOCK_DGRAM,IPPROTO_UDP)) < 0)
+	if ((sock = socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP)) < 0)
 	{
 		printf("unable to create socket");
 	}
