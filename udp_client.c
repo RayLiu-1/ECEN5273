@@ -7,6 +7,15 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <sys/time.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -16,7 +25,7 @@
 
 /* You will have to modify the program below */
 
-int main (int argc, char * argv[])
+int main(int argc, char * argv[])
 {
 
 	int nbytes;                             // number of bytes send by sendto()
@@ -31,43 +40,54 @@ int main (int argc, char * argv[])
 		exit(1);
 	}
 	/******************
-	  Here we populate a sockaddr_in struct with
-	  information regarding where we'd like to send our packet 
-	  i.e the Server.
-	 ******************/
-	bzero(&remote,sizeof(remote));               //zero the struct
+	Here we populate a sockaddr_in struct with
+	information regarding where we'd like to send our packet
+	i.e the Server.
+	******************/
+	bzero(&remote, sizeof(remote));               //zero the struct
 	remote.sin_family = AF_INET;                 //address family
 	remote.sin_port = htons(atoi(argv[2]));      //sets port to network byte order
 	remote.sin_addr.s_addr = inet_addr(argv[1]); //sets remote IP address
 
-	
-	//Causes the system to create a generic socket of type UDP (datagram)
-	if ((sock = socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP)) < 0)
+
+												 //Causes the system to create a generic socket of type UDP (datagram)
+	if ((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
 		printf("unable to create socket");
 	}
-	
+
 	/******************
-	  sendto() sends immediately.  
-	  it will report an error if the message fails to leave the computer
-	  however, with UDP, there is no error if the message is lost in the network once it leaves the computer.
-	 ******************/
-	char command[] = "apple";	
-	if ((nbytes = sendto(sock,command,sizeof(command),0,(struct sockaddr*)&remote,sizeof(remote))) < 0)
+	sendto() sends immediately.
+	it will report an error if the message fails to leave the computer
+	however, with UDP, there is no error if the message is lost in the network once it leaves the computer.
+	******************/
+	while (1)
 	{
-		printf("unable to send socket");
-	}
+		int bytes_command;
+		nbytes = 100;
+		char *command;
+		puts("Please enter a command.");
 
-	// Blocks till bytes are received
-	struct sockaddr_in from_addr;
-	int addr_length = sizeof(struct sockaddr);
-	bzero(buffer,sizeof(buffer));
-	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) < 0)
-	{
-		printf("unable to receive socket");
-	}
+		my_string = (char*)malloc(nbytes + 1);
+		bytes_command = getline(&command, &nbytes, stdin);
 
-	printf("Server says %s\n", buffer);
+		if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+		{
+			printf("unable to send socket");
+		}
+		// Blocks till bytes are received
+		struct sockaddr_in from_addr;
+		int addr_length = sizeof(struct sockaddr);
+		bzero(buffer, sizeof(buffer));
+		if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) < 0)
+		{
+			printf("unable to receive socket");
+		}
+
+		printf("Server says %s\n", buffer);
+
+	}
+	
 
 	close(sock);
 
