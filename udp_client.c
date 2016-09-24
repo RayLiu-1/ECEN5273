@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
 		char *command;
 		puts("Please enter a command.");
 
-		my_string = (char*)malloc(nbytes + 1);
+		command = (char*)malloc(nbytes + 1);
 		bytes_command = getline(&command, &nbytes, stdin);
 
 		if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
