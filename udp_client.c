@@ -70,6 +70,8 @@ int main(int argc, char * argv[])
 
 		command = (char*)malloc(nbytes + 1);
 		bytes_command = getline(&command, &nbytes, stdin);
+		pritf("size:%d", bytes_command);
+
 
 		if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 		{
