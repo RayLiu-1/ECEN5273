@@ -83,7 +83,7 @@ int main(int argc, char * argv[])
 			FILE *fp1;
 			char file[MAXBUFSIZE+1];
 			char buffer[MAXBUFSIZE+1];
-			strncpy(file, command + 4, bytes_command - 4);
+			strncpy(file, command + 4, bytes_command - 5);
 			fp = fopen(file,"r");
 			if(fp==NULL)
 			{
