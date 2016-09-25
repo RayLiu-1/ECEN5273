@@ -84,10 +84,8 @@ int main(int argc, char * argv[])
 			char file[MAXBUFSIZE+1];
 			char buffer[MAXBUFSIZE+1];
 			memcpy(file, command + 4, bytes_command - 4);
-			if(fp = fopen("foo","r")==NULL)
-			{
-				printf("%s do not exit\n",file);
-			}
+			fp = fopen("foo","r")；
+			
 			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
 			puts(buffer);
 			fp1 = fopen("copy.txt", "w");
