@@ -88,6 +88,7 @@ int main(int argc, char * argv[])
 			if(fp==NULL)
 			{
 				puts("file do not exits");
+				puts("file");
 			}
 			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
 			puts(buffer);
