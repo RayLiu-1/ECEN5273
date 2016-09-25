@@ -87,6 +87,7 @@ int main(int argc, char * argv[])
 			memcpy(file, command + 4, bytes_command - 4);
 
 			fp = fopen(file, "r");
+			char a = getchar();
 			fgets(file, 100, (FILE*)fp);
 			fp1 = fopen("copy.txt", "w");
 			fputs(file, fp1);
