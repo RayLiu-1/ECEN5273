@@ -141,9 +141,11 @@ int main(int argc, char * argv[])
 			}
 			else
 			{
-				char msg[] = "ACK";
-				if ((nbytes = sendto(sock,msg,sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
-					printf("unable to send file");
+				//char msg[] = "ACK";
+				//if ((nbytes = sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+					//printf("unable to send file");
+				if (buffer[0] == 0)
+					break;
 				puts(buffer);
 			}
 			
