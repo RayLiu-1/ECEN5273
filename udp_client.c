@@ -28,7 +28,7 @@ int main(int argc, char * argv[])
 	timeout.tv_usec = 0;
 	int nbytes;                             // number of bytes send by sendto()
 	int sock;                               //this will be our socket
-	char buffer[MAXBUFSIZE+1];
+	char buffer[MAXBUFSIZE + 1];
 	char buf[MAXBUFSIZE];
 
 	struct sockaddr_in remote;              //"Internet socket address structure"
@@ -79,8 +79,8 @@ int main(int argc, char * argv[])
 		command = (char*)malloc(nbytes + 1);
 		bytes_command = getline(&command, &nbytes, stdin);
 
-		while(1)
-		{ 
+		while (1)
+		{
 			if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 			{
 				printf("unable to send command");
@@ -100,16 +100,16 @@ int main(int argc, char * argv[])
 			{
 				puts("file do not exits");
 			}
-			int bytes_read = fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+			int bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
 			while (bytes_read>0)
 			{
 				buffer[0] = 1;
 				strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
 				while (1)
 				{
-					if((nbytes = sendto(sock, buffer, bytes_read+1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+					if ((nbytes = sendto(sock, buffer, bytes_read + 1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 						printf("unable to send file");
-					if (nbytes = recvfrom(sock, buf, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+					if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
 					{
 						break;
 					}
@@ -117,10 +117,19 @@ int main(int argc, char * argv[])
 				puts(buf);
 				bzero(buffer, sizeof(buffer));
 				bzero(sendBuf, sizeof(sendBuf));
-				bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+				bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
 			}
-			
 			fclose(fp);
+			while (1)
+			{
+				bzero(buffer, sizeof(buffer));
+				if ((nbytes = sendto(sock, buffer,1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+					printf("unable to send file");
+				if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+				{
+					break;
+				}
+			}
 		}
 		// Blocks till bytes are received
 		printf("Server says %s\n", buffer);
