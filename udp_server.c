@@ -16,7 +16,7 @@
 
 #define MAXBUFSIZE 100
 
-int main (int argc, char * argv[] )
+int main(int argc, char * argv[])
 {
 	struct timeval timeout;
 	timeout.tv_sec = 10;
@@ -25,7 +25,7 @@ int main (int argc, char * argv[] )
 	struct sockaddr_in sin, remote;     //"Internet socket address structure"
 	unsigned int remote_length;         //length of the sockaddr_in structure
 	int nbytes;                        //number of bytes we receive in our message
-	char buffer[MAXBUFSIZE+1];             //a buffer to store our received message
+	char buffer[MAXBUFSIZE + 1];             //a buffer to store our received message
 	char writeBuf[MAXBUFSIZE];             //buffer to store data to write
 	if (argc != 2)
 	{
@@ -35,25 +35,25 @@ int main (int argc, char * argv[] )
 	bzero(buffer, sizeof(buffer));
 	bzero(writeBuf, sizeof(writeBuf));
 	/******************
-	  This code populates the sockaddr_in struct with
-	  the information about our socket
-	 ******************/
-	bzero(&sin,sizeof(sin));                    //zero the struct
+	This code populates the sockaddr_in struct with
+	the information about our socket
+	******************/
+	bzero(&sin, sizeof(sin));                    //zero the struct
 	sin.sin_family = AF_INET;                   //address family
 	sin.sin_port = htons(atoi(argv[1]));        //htons() sets the port # to network byte order
 	sin.sin_addr.s_addr = INADDR_ANY;           //supplies the IP address of the local machine
 
 
-	//Causes the system to create a generic socket of type UDP (datagram)
-	if ((sock = socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP)) < 0)
+												//Causes the system to create a generic socket of type UDP (datagram)
+	if ((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
 		printf("unable to create socket");
 	}
 
 	/******************
-	  Once we've created a socket, we must bind that socket to the 
-	  local address and port we've supplied in the sockaddr_in struct
-	 ******************/
+	Once we've created a socket, we must bind that socket to the
+	local address and port we've supplied in the sockaddr_in struct
+	******************/
 	if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0)
 	{
 		printf("unable to bind socket\n");
@@ -62,9 +62,10 @@ int main (int argc, char * argv[] )
 	remote_length = sizeof(remote);
 
 	//waits for an incoming message
-	bzero(buffer,sizeof(buffer));
+	bzero(buffer, sizeof(buffer));
 	while (1)
-	{	nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length);
+	{
+		nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length);
 		if (nbytes < 0)
 		{
 			printf("unable to receive socket\n");
@@ -82,16 +83,16 @@ int main (int argc, char * argv[] )
 			strncpy(file, buffer + 4, nbytes - 5);
 			fp = fopen(file, "w");
 			int bytes_write;
-			while(1)
+			while (1)
 			{
 				bzero(buffer, sizeof(buffer));
-				bzero(writeBuf, sizeof(writeBuf));				
-				if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
+				bzero(writeBuf, sizeof(writeBuf));
+				nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length);
+				if (nbytes< 0)
 				{
 					printf("unable to receive socket\n");
 				}
-				
-				strncpy(writeBuf, buffer + 1, nbytes);
+				strncpy(writeBuf, buffer + 1, nbytes-1);
 				fwrite(writeBuf, sizeof(writeBuf[0]), nbytes - 1, (FILE*)fp);
 				if (buffer[0] == 0)
 				{
