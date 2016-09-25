@@ -11,15 +11,6 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <errno.h>
 #include <sys/time.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -32,7 +23,9 @@
 
 int main(int argc, char * argv[])
 {
-
+	struct timeval timeout;
+	timeout.tv_sec = 10;
+	timeout.tv_usec = 0;
 	int nbytes;                             // number of bytes send by sendto()
 	int sock;                               //this will be our socket
 	char buffer[MAXBUFSIZE];
@@ -61,58 +54,72 @@ int main(int argc, char * argv[])
 		printf("unable to create socket");
 	}
 
+	//set delay for socket receiving
+	if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+	{
+		printf("unable to set socket");
+	}
 	/******************
 	sendto() sends immediately.
 	it will report an error if the message fails to leave the computer
 	however, with UDP, there is no error if the message is lost in the network once it leaves the computer.
 	******************/
+	struct sockaddr_in from_addr;
+	int addr_length = sizeof(struct sockaddr);
+	bzero(buffer, sizeof(buffer));
 	while (1)
 	{
 		int bytes_command;
 		nbytes = MAXBUFSIZE;
 		char *command;
+		char *sendBuf[MAXBUFSIZE + 1];
 		puts("Please enter a command.");
 
 		command = (char*)malloc(nbytes + 1);
 		bytes_command = getline(&command, &nbytes, stdin);
 
+		while(1)
+		{ 
+			if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+			{
+				printf("unable to send command");
+			}
+			if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+			{
+				break;
+			}
+		}
+		
+		/*if(strcmp(buffer,command))
 		if (bytes_command > 4 && strncmp(command, "put ", 4) == 0)
 		{
-			
+
 			FILE *fp;
-			FILE *fp1;
-			char file[MAXBUFSIZE+1];
-			char buffer[MAXBUFSIZE+1];
+			char file[MAXBUFSIZE + 1];
 			strncpy(file, command + 4, bytes_command - 5);
-			fp = fopen(file,"r");
-			if(fp==NULL)
+			fp = fopen(file, "r");
+			if (fp == NULL)
 			{
 				puts("file do not exits");
-				puts(file);
 			}
-			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
-			puts(buffer);
-			fp1 = fopen("copy.txt", "w");
-			fputs(buffer, fp1);
-			fclose(fp1);
-			fclose(fp);
-			char a = getchar();
+			int bytes_read;
+			while (bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp)>0)
+			{
+		
+				while ()
+				{
+					if((nbytes = sendto(sock, buffer, bytes_read, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+						printf("unable to send file");
 
+				}
+				while()
+			}
 		}
 
 
-		if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
-		{
-			printf("unable to send socket");
-		}
+		*/
 		// Blocks till bytes are received
-		struct sockaddr_in from_addr;
-		int addr_length = sizeof(struct sockaddr);
-		bzero(buffer, sizeof(buffer));
-		if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) < 0)
-		{
-			printf("unable to receive socket");
-		}
+		
 
 		printf("Server says %s\n", buffer);
 
