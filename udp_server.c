@@ -100,6 +100,7 @@ int main(int argc, char * argv[])
 				}
 			}
 			fclose(fp);
+			puts("File is put");
 		}
 	}
 	close(sock);
