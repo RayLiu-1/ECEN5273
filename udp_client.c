@@ -114,7 +114,6 @@ int main(int argc, char * argv[])
 						break;
 					}
 				}
-				puts(buf);
 				bzero(buffer, sizeof(buffer));
 				bzero(sendBuf, sizeof(sendBuf));
 				bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
