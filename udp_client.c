@@ -82,7 +82,7 @@ int main(int argc, char * argv[])
 			FILE *fp;
 			FILE *fp1;
 			char file[MAXBUFSIZE];
-			char buffer[MAXBUFSIZE];
+			char buffer[MAXBUFSIZE+1];
 			memcpy(file, command + 4, bytes_command - 4);
 			if(fp = fopen("foo","r")==NULL)
 			{
