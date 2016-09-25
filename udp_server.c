@@ -1,4 +1,16 @@
-#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -11,68 +23,87 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <errno.h>
 #include <string.h>
-/* You will have to modify the program below */
 
 #define MAXBUFSIZE 100
 
-int main (int argc, char * argv[] )
+/* You will have to modify the program below */
+
+int main(int argc, char * argv[])
 {
 
+	int nbytes;                             // number of bytes send by sendto()
+	int sock;                               //this will be our socket
+	char buffer[MAXBUFSIZE];
 
-	int sock;                           //This will be our socket
-	struct sockaddr_in sin, remote;     //"Internet socket address structure"
-	unsigned int remote_length;         //length of the sockaddr_in structure
-	int nbytes;                        //number of bytes we receive in our message
-	char buffer[MAXBUFSIZE];             //a buffer to store our received message
-	if (argc != 2)
+	struct sockaddr_in remote;              //"Internet socket address structure"
+
+	if (argc < 3)
 	{
-		printf ("USAGE:  <port>\n");
+		printf("USAGE:  <server_ip> <server_port>\n");
 		exit(1);
 	}
-
 	/******************
-	  This code populates the sockaddr_in struct with
-	  the information about our socket
-	 ******************/
-	bzero(&sin,sizeof(sin));                    //zero the struct
-	sin.sin_family = AF_INET;                   //address family
-	sin.sin_port = htons(atoi(argv[1]));        //htons() sets the port # to network byte order
-	sin.sin_addr.s_addr = INADDR_ANY;           //supplies the IP address of the local machine
+	Here we populate a sockaddr_in struct with
+	information regarding where we'd like to send our packet
+	i.e the Server.
+	******************/
+	bzero(&remote, sizeof(remote));               //zero the struct
+	remote.sin_family = AF_INET;                 //address family
+	remote.sin_port = htons(atoi(argv[2]));      //sets port to network byte order
+	remote.sin_addr.s_addr = inet_addr(argv[1]); //sets remote IP address
 
 
-	//Causes the system to create a generic socket of type UDP (datagram)
-	if ((sock = socket(PF_INET,SOCK_DGRAM,IPPROTO_UDP)) < 0)
+												 //Causes the system to create a generic socket of type UDP (datagram)
+	if ((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
 		printf("unable to create socket");
 	}
 
 	/******************
-	  Once we've created a socket, we must bind that socket to the 
-	  local address and port we've supplied in the sockaddr_in struct
-	 ******************/
-	if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0)
+	sendto() sends immediately.
+	it will report an error if the message fails to leave the computer
+	however, with UDP, there is no error if the message is lost in the network once it leaves the computer.
+	******************/
+	while (1)
 	{
-		printf("unable to bind socket\n");
+		int bytes_command;
+		nbytes = MAXBUFSIZE;
+		char *command;
+		puts("Please enter a command.");
+
+		command = (char*)malloc(nbytes + 1);
+		bytes_command = getline(&command, &nbytes, stdin);
+		printf("size:%d", bytes_command);
+
+		if (bytes_command > 4 && strncmp(command, "put ", 4) == 0)
+		{
+			char file[MAXBUFSIZE];
+			memcpy(file, command + 4, bytes_command - 4);
+			puts(file);
+			char a = getchar();
+		}
+
+
+		if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+		{
+			printf("unable to send socket");
+		}
+		// Blocks till bytes are received
+		struct sockaddr_in from_addr;
+		int addr_length = sizeof(struct sockaddr);
+		bzero(buffer, sizeof(buffer));
+		if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) < 0)
+		{
+			printf("unable to receive socket");
+		}
+
+		printf("Server says %s\n", buffer);
+
 	}
 
-	remote_length = sizeof(remote);
-
-	//waits for an incoming message
-	bzero(buffer,sizeof(buffer));
-	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
-	{
-		printf("unable to receive socket\n");
-	}
-
-	printf("The client says %s\n", buffer);
-
-	char msg[] = "orange";
-	if ((nbytes = sendto(sock, msg, sizeof(msg),0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
-	{
-		printf("unable to send socket");
-	}
 
 	close(sock);
-}
 
+}
