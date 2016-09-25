@@ -134,7 +134,8 @@ int main(int argc, char * argv[])
 		{
 			bzero(buffer,sizeof(buffer));
 			bzero(buf,sizeof(buf));
-			nbytes = recvfrom(sock,buffer,sizeof(buffer),0,(struct sockaddr*)&remote, sizeof(remote));
+			
+			nbytes = recvfrom(sock,buffer,sizeof(buffer),0,(struct sockaddr*)&from_addr, &addr_length);
 			if(nbytes<0)
 			{
 				puts("unable to receive files list");
