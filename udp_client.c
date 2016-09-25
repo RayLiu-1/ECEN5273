@@ -79,10 +79,21 @@ int main(int argc, char * argv[])
 
 		if (bytes_command > 4 && strncmp(command, "put ", 4) == 0)
 		{
+			
+			FILE *fp;
+			FILE *fp1;
 			char file[MAXBUFSIZE];
+			char buffer[MAXBUFSIZE];
 			memcpy(file, command + 4, bytes_command - 4);
-			puts(file);
+
+			fp = fopen(file, "r");
+			fgets(file, 100, (FILE*)fp);
+			fp1 = fopen("copy.txt", "w");
+			fputs(file, fp1);
+			fclose(fp1);
+			fclose(fp);
 			char a = getchar();
+
 		}
 
 
