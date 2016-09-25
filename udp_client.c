@@ -28,7 +28,7 @@ int main(int argc, char * argv[])
 	timeout.tv_usec = 0;
 	int nbytes;                             // number of bytes send by sendto()
 	int sock;                               //this will be our socket
-	char buffer[MAXBUFSIZE];
+	char buffer[MAXBUFSIZE+1];
 
 	struct sockaddr_in remote;              //"Internet socket address structure"
 
@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 		int bytes_command;
 		nbytes = MAXBUFSIZE;
 		char *command;
-		char *sendBuf[MAXBUFSIZE + 1];
+		char *sendBuf[MAXBUFSIZE];
 		puts("Please enter a command.");
 
 		command = (char*)malloc(nbytes + 1);
@@ -89,13 +89,10 @@ int main(int argc, char * argv[])
 				break;
 			}
 		}
-		
-		/*if(strcmp(buffer,command))
 		if (bytes_command > 4 && strncmp(command, "put ", 4) == 0)
 		{
-
 			FILE *fp;
-			char file[MAXBUFSIZE + 1];
+			char file[MAXBUFSIZE];
 			strncpy(file, command + 4, bytes_command - 5);
 			fp = fopen(file, "r");
 			if (fp == NULL)
@@ -105,22 +102,24 @@ int main(int argc, char * argv[])
 			int bytes_read;
 			while (bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp)>0)
 			{
-		
-				while ()
+				buffer[0] = 1;
+				strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
+				while (1)
 				{
-					if((nbytes = sendto(sock, buffer, bytes_read, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+					if((nbytes = sendto(sock, buffer, bytes_read+1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 						printf("unable to send file");
-
+					if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+					{
+						break;
+					}
 				}
-				while()
+				bzero(buffer, sizeof(buffer));
+				bzero(sendBuf, sizeof(sendBuf));
+
 			}
+			fclose(fp);
 		}
-
-
-		*/
 		// Blocks till bytes are received
-		
-
 		printf("Server says %s\n", buffer);
 
 	}
