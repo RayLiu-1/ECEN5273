@@ -81,6 +81,7 @@ int main(int argc, char * argv[])
 			FILE* fp;
 			char file[MAXBUFSIZE + 1];
 			strncpy(file, buffer + 4, nbytes - 5);
+			puts(file);
 			fp = fopen(file, "w");
 			int bytes_write;
 			while (1)
