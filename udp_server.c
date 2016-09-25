@@ -72,13 +72,15 @@ int main(int argc, char * argv[])
 		}
 		printf("The client says %s\n", buffer);
 		char msg[] = "ACK";
-		
+		if ((sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+		{
+			printf("unable to send socket");
+		}
 		if (nbytes > 4 && strncmp(buffer, "put ", 4) == 0)
 		{
 			FILE* fp;
 			char file[MAXBUFSIZE + 1];
 			strncpy(file, buffer + 4, nbytes - 5);
-			puts(file);
 			fp = fopen(file, "w");
 			int bytes_write;
 			while (1)
@@ -94,13 +96,12 @@ int main(int argc, char * argv[])
 				{
 					printf("unable to send socket");
 				}
+				strncpy(writeBuf, buffer + 1, nbytes - 1);
+				fwrite(writeBuf, sizeof(writeBuf[0]), nbytes - 1, (FILE*)fp);
 				if (buffer[0] == 0)
 				{
 					break;
 				}
-				strncpy(writeBuf, buffer + 1, nbytes-1);
-				fwrite(writeBuf, sizeof(writeBuf[0]), nbytes - 1, (FILE*)fp);
-				
 			}
 			fclose(fp);
 			puts("File is put");
