@@ -81,18 +81,17 @@ int main(int argc, char * argv[])
 			
 			FILE *fp;
 			FILE *fp1;
-			char file[MAXBUFSIZE];
+			char file[MAXBUFSIZE+1];
 			char buffer[MAXBUFSIZE+1];
 			memcpy(file, command + 4, bytes_command - 4);
 			if(fp = fopen("foo","r")==NULL)
 			{
 				printf("%s do not exit\n",file);
 			}
-			puts(buffer);
 			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
 			puts(buffer);
 			fp1 = fopen("copy.txt", "w");
-			fputs(file, fp1);
+			fputs(buffer, fp1);
 			fclose(fp1);
 			fclose(fp);
 			char a = getchar();
