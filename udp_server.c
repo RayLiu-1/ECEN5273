@@ -64,8 +64,8 @@ int main (int argc, char * argv[] )
 	//waits for an incoming message
 	bzero(buffer,sizeof(buffer));
 	while (1)
-	{
-		if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
+	{	nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length);
+		if (nbytes < 0)
 		{
 			printf("unable to receive socket\n");
 		}
