@@ -88,6 +88,7 @@ int main(int argc, char * argv[])
 			{
 				printf("%s do not exit\n",file);
 			}
+			puts(buffer);
 			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
 			puts(buffer);
 			fp1 = fopen("copy.txt", "w");
