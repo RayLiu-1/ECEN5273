@@ -84,7 +84,11 @@ int main(int argc, char * argv[])
 			char file[MAXBUFSIZE+1];
 			char buffer[MAXBUFSIZE+1];
 			strncpy(file, command + 4, bytes_command - 4);
-			fp = fopen("foo","r");
+			fp = fopen(file,"r");
+			if(fp==NULL)
+			{
+				puts("file do not exits");
+			}
 			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
 			puts(buffer);
 			fp1 = fopen("copy.txt", "w");
