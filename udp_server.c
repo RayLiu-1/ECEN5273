@@ -122,7 +122,8 @@ int main(int argc, char * argv[])
 				}
 				closedir(d);
 			}
-			sendto(sock,
+			buffer[0] = 0;
+			sendto(sock,buffer,1,0,(struct sockaddr*)&remote,sizeof(remote));
 		}
 	}
 	close(sock);
