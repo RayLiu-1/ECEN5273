@@ -14,7 +14,7 @@
 #include <string.h>
 /* You will have to modify the program below */
 
-#define MAXBUFSIZE 100
+#define MAXBUFSIZE 5000
 
 int main(int argc, char * argv[])
 {
