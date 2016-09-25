@@ -75,7 +75,6 @@ int main(int argc, char * argv[])
 
 		command = (char*)malloc(nbytes + 1);
 		bytes_command = getline(&command, &nbytes, stdin);
-		printf("size:%d", bytes_command);
 
 		if (bytes_command > 4 && strncmp(command, "put ", 4) == 0)
 		{
@@ -85,9 +84,28 @@ int main(int argc, char * argv[])
 			char file[MAXBUFSIZE];
 			char buffer[MAXBUFSIZE];
 			memcpy(file, command + 4, bytes_command - 4);
+			if(fp = fopen("foo","r")==NULL)
+			{
+				printf("%s do not exit\n",file);
+			}
+			fgets(buffer, MAXBUFSIZE, (FILE*)fp);
+			puts(buffer);
+			fp1 = fopen("copy.txt", "w");
+			fputs(file, fp1);
+			fclose(fp1);
+			fclose(fp);
+			char a = getchar();
+
 
 			fp = fopen(file, "r");
+			fgets(file, 100, (FILE*)fp);
+			fp1 = fopen("copy.txt", "w");
+			fputs(file, fp1);
+			fclose(fp1);
+			fclose(fp);
 			char a = getchar();
+
+			fp = fopen(file, "r");
 			fgets(file, 100, (FILE*)fp);
 			fp1 = fopen("copy.txt", "w");
 			fputs(file, fp1);
