@@ -29,6 +29,7 @@ int main(int argc, char * argv[])
 	int nbytes;                             // number of bytes send by sendto()
 	int sock;                               //this will be our socket
 	char buffer[MAXBUFSIZE+1];
+	char buf[MAXBUFSIZE];
 
 	struct sockaddr_in remote;              //"Internet socket address structure"
 
@@ -99,24 +100,24 @@ int main(int argc, char * argv[])
 			{
 				puts("file do not exits");
 			}
-			int bytes_read = 1;
+			int bytes_read = fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
 			while (bytes_read>0)
 			{
-				bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
 				buffer[0] = 1;
 				strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
 				while (1)
 				{
-					puts(buffer);
 					if((nbytes = sendto(sock, buffer, bytes_read+1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 						printf("unable to send file");
-					if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+					if (nbytes = recvfrom(sock, buf, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
 					{
 						break;
 					}
 				}
+				puts(buf);
 				bzero(buffer, sizeof(buffer));
 				bzero(sendBuf, sizeof(sendBuf));
+				bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
 			}
 			
 			fclose(fp);
