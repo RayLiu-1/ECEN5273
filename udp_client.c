@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 		int bytes_command;
 		nbytes = MAXBUFSIZE;
 		char *command;
-		char *sendBuf[MAXBUFSIZE];
+		char sendBuf[MAXBUFSIZE];
 		puts("Please enter a command.");
 
 		command = (char*)malloc(nbytes + 1);
