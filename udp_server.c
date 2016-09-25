@@ -18,19 +18,22 @@
 
 int main (int argc, char * argv[] )
 {
-
-
+	struct timeval timeout;
+	timeout.tv_sec = 10;
+	timeout.tv_usec = 0;
 	int sock;                           //This will be our socket
 	struct sockaddr_in sin, remote;     //"Internet socket address structure"
 	unsigned int remote_length;         //length of the sockaddr_in structure
 	int nbytes;                        //number of bytes we receive in our message
-	char buffer[MAXBUFSIZE];             //a buffer to store our received message
+	char buffer[MAXBUFSIZE+1];             //a buffer to store our received message
+	char writeBuf[MAXBUFSIZE];             //buffer to store data to write
 	if (argc != 2)
 	{
-		printf ("USAGE:  <port>\n");
+		printf("USAGE:  <port>\n");
 		exit(1);
 	}
-
+	bzero(buffer, sizeof(buffer));
+	bzero(writeBuf, sizeof(writeBuf));
 	/******************
 	  This code populates the sockaddr_in struct with
 	  the information about our socket
@@ -60,18 +63,43 @@ int main (int argc, char * argv[] )
 
 	//waits for an incoming message
 	bzero(buffer,sizeof(buffer));
-	if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
+	while (1)
 	{
-		printf("unable to receive socket\n");
+		if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
+		{
+			printf("unable to receive socket\n");
+		}
+		printf("The client says %s\n", buffer);
+		char msg[] = "ACK";
+		if ((sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+		{
+			printf("unable to send socket");
+		}
+		if (nbytes > 4 && strncmp(buffer, "put ", 4) == 0)
+		{
+			FILE* fp;
+			char file[MAXBUFSIZE + 1];
+			strncpy(file, buffer + 4, nbytes - 5);
+			fp = fopen(file, "w");
+			int bytes_write;
+			while(1)
+			{
+				bzero(buffer, sizeof(buffer));
+				bzero(writeBuf, sizeof(writeBuf));				
+				if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length) < 0)
+				{
+					printf("unable to receive socket\n");
+				}
+				
+				strncpy(writeBuf, buffer + 1, nbytes);
+				fwrite(writeBuf, sizeof(writeBuf[0]), nbytes - 1, (FILE*)fp);
+				if (buffer[0] == 0)
+				{
+					break;
+				}
+			}
+			fclose(fp);
+		}
 	}
-
-	printf("The client says %s\n", buffer);
-
-	char msg[] = "orange";
-	if ((nbytes = sendto(sock, msg, sizeof(msg),0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
-	{
-		printf("unable to send socket");
-	}
-
 	close(sock);
 }
