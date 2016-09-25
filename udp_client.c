@@ -2,6 +2,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -20,6 +24,7 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <errno.h>
+#include <string.h>
 
 #define MAXBUFSIZE 100
 
@@ -64,13 +69,21 @@ int main(int argc, char * argv[])
 	while (1)
 	{
 		int bytes_command;
-		nbytes = 100;
+		nbytes = MAXBUFSIZE;
 		char *command;
 		puts("Please enter a command.");
 
 		command = (char*)malloc(nbytes + 1);
 		bytes_command = getline(&command, &nbytes, stdin);
 		printf("size:%d", bytes_command);
+
+		if (bytes_command > 4 && strncmp(command, "put ", 4) == 0)
+		{
+			char file[MAXBUFSIZE];
+			memcpy(file, command + 4, bytes_command - 4);
+			puts(file);
+			char a = getchar();
+		}
 
 
 		if ((nbytes = sendto(sock, command, bytes_command, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
@@ -89,9 +102,8 @@ int main(int argc, char * argv[])
 		printf("Server says %s\n", buffer);
 
 	}
-	
+
 
 	close(sock);
 
 }
-
