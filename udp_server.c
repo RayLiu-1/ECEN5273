@@ -106,6 +106,24 @@ int main(int argc, char * argv[])
 			fclose(fp);
 			puts("File is put");
 		}
+		else if(bytes_command > 2 && strncmp(command, "ls", 2) == 0)
+		{
+			bzero(buffer,sizeof(buffer));
+			DIR *d;
+			sturct dirent *dir;
+			d = opendir(".");
+			if (d)
+			{
+				while((dir = readdir(d)) != NULL)
+				{
+					strncpy(buffer,dir->d_name,strlen(dir->d_name);
+					buffer[strlen(dir->d_name)] = '\n';
+					sendto(sock,dir->d_name,strlen(dir->d_name)+1,0,(struct sockaddr*)&remote,sizeof(remote));
+				}
+				closedir(d);
+			}
+			sendto(sock,
+		}
 	}
 	close(sock);
 }
