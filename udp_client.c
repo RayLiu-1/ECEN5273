@@ -99,13 +99,15 @@ int main(int argc, char * argv[])
 			{
 				puts("file do not exits");
 			}
-			int bytes_read;
-			while (bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp)>0)
+			int bytes_read = 1;
+			while (bytes_read>0)
 			{
+				bytes_read=fread(sendBuf,sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
 				buffer[0] = 1;
 				strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
 				while (1)
 				{
+					puts(buffer);
 					if((nbytes = sendto(sock, buffer, bytes_read+1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 						printf("unable to send file");
 					if (nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
@@ -115,8 +117,8 @@ int main(int argc, char * argv[])
 				}
 				bzero(buffer, sizeof(buffer));
 				bzero(sendBuf, sizeof(sendBuf));
-
 			}
+			
 			fclose(fp);
 		}
 		// Blocks till bytes are received
