@@ -96,23 +96,6 @@ int main(int argc, char * argv[])
 			fclose(fp);
 			char a = getchar();
 
-
-			fp = fopen(file, "r");
-			fgets(file, 100, (FILE*)fp);
-			fp1 = fopen("copy.txt", "w");
-			fputs(file, fp1);
-			fclose(fp1);
-			fclose(fp);
-			char a = getchar();
-
-			fp = fopen(file, "r");
-			fgets(file, 100, (FILE*)fp);
-			fp1 = fopen("copy.txt", "w");
-			fputs(file, fp1);
-			fclose(fp1);
-			fclose(fp);
-			char a = getchar();
-
 		}
 
 
