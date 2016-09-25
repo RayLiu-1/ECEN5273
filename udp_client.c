@@ -17,7 +17,7 @@
 #include <errno.h>
 #include <string.h>
 
-#define MAXBUFSIZE 100
+#define MAXBUFSIZE 5000
 
 /* You will have to modify the program below */
 
