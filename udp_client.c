@@ -168,7 +168,7 @@ int main(int argc, char * argv[])
 			while (1)
 			{
 				bzero(buffer, sizeof(buffer));
-				bzero(writeBuf, sizeof(writeBuf));
+				bzero(buf, sizeof(buf));
 				nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length);
 				if (nbytes< 0)
 				{
@@ -178,8 +178,8 @@ int main(int argc, char * argv[])
 				{
 					printf("unable to send socket");
 				}
-				strncpy(writeBuf, buffer + 1, nbytes - 1);
-				fwrite(writeBuf, sizeof(writeBuf[0]), nbytes - 1, (FILE*)fp);
+				strncpy(buf, buffer + 1, nbytes - 1);
+				fwrite(buf, sizeof(buf[0]), nbytes - 1, (FILE*)fp);
 				if (buffer[0] == 0)
 				{
 					break;
