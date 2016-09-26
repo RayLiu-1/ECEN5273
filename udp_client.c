@@ -160,6 +160,7 @@ int main(int argc, char * argv[])
 		else if(bytes_command > 4 && strncmp(command, "get ", 4) == 0)
 		{
 			FILE* fp;
+			char msg[] = "ACK";
 			char file[MAXBUFSIZE + 1];
 			strncpy(file, command + 4, bytes_command - 5);
 			fp = fopen(file, "w");
@@ -168,7 +169,7 @@ int main(int argc, char * argv[])
 			{
 				bzero(buffer, sizeof(buffer));
 				bzero(writeBuf, sizeof(writeBuf));
-				nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length);
+				nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length);
 				if (nbytes< 0)
 				{
 					printf("unable to receive socket\n");
