@@ -100,37 +100,40 @@ int main(int argc, char * argv[])
 			{
 				puts("file do not exits");
 			}
-			int bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
-			while (bytes_read>0)
-			{
-				buffer[0] = 1;
-				strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
+			else{
+				
+				int bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+				while (bytes_read>0)
+				{
+					buffer[0] = 1;
+					strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
+					while (1)
+					{
+						if ((nbytes = sendto(sock, buffer, bytes_read + 1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+							printf("unable to send file");
+						if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+						{
+							break;
+						}
+					}
+					bzero(buffer, sizeof(buffer));
+					bzero(sendBuf, sizeof(sendBuf));
+					bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+				}
+				fclose(fp);
 				while (1)
 				{
-					if ((nbytes = sendto(sock, buffer, bytes_read + 1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+					bzero(buffer, sizeof(buffer));
+					if ((nbytes = sendto(sock, buffer,1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 						printf("unable to send file");
 					if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
 					{
 						break;
 					}
 				}
-				bzero(buffer, sizeof(buffer));
-				bzero(sendBuf, sizeof(sendBuf));
-				bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
-			}
-			fclose(fp);
-			while (1)
-			{
-				bzero(buffer, sizeof(buffer));
-				if ((nbytes = sendto(sock, buffer,1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
-					printf("unable to send file");
-				if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
-				{
-					break;
-				}
 			}
 		}
-		if (bytes_command > 2 && strncmp(command, "ls", 2) == 0)
+		else if (bytes_command > 2 && strncmp(command, "ls", 2) == 0)
 		{
 			while(1)
 			{
@@ -154,6 +157,37 @@ int main(int argc, char * argv[])
 			}
 			
 		}
+		else if(bytes_command > 4 && strncmp(command, "get ", 4) == 0)
+		{
+			FILE* fp;
+			char file[MAXBUFSIZE + 1];
+			strncpy(file, command + 4, bytes_command - 5);
+			fp = fopen(file, "w");
+			int bytes_write;
+			while (1)
+			{
+				bzero(buffer, sizeof(buffer));
+				bzero(writeBuf, sizeof(writeBuf));
+				nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&remote, &remote_length);
+				if (nbytes< 0)
+				{
+					printf("unable to receive socket\n");
+				}
+				if ((sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+				{
+					printf("unable to send socket");
+				}
+				strncpy(writeBuf, buffer + 1, nbytes - 1);
+				fwrite(writeBuf, sizeof(writeBuf[0]), nbytes - 1, (FILE*)fp);
+				if (buffer[0] == 0)
+				{
+					break;
+				}
+			}
+			fclose(fp);
+			puts("File is get");
+		}
+ 
 		
 		// Blocks till bytes are received
 	}
