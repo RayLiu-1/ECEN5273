@@ -192,7 +192,13 @@ int main(int argc, char * argv[])
 		{
 			bzero(buffer, sizeof(buffer));
 			nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length);
-			puts("File is get");
+			puts("The server has exit gracefully.");
+		}
+		else
+		{
+			bzero(buffer, sizeof(buffer));
+			nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length);
+			puts(buffer);
 		}
  
 		
