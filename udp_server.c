@@ -171,6 +171,14 @@ int main(int argc, char * argv[])
 				}
 			}
 		}
+		else if(nbytes > 4 && strncmp(buffer, "exit", 4) == 0)
+		{
+			if ((sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+			{
+				printf("unable to send socket");
+			}
+			exit(0);
+		}
 	}
 	close(sock);
 }
