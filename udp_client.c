@@ -188,6 +188,12 @@ int main(int argc, char * argv[])
 			fclose(fp);
 			puts("File is get");
 		}
+		else if(bytes_command > 4 && strncmp(command, "exit", 4) == 0)
+		{
+			bzero(buffer, sizeof(buffer));
+			nbytes = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &addr_length);
+			puts("File is get");
+		}
  
 		
 		// Blocks till bytes are received
