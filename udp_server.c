@@ -119,7 +119,7 @@ int main(int argc, char * argv[])
 				{
 					//strncpy(buffer,dir->d_name,strlen(dir->d_name));
 					//buffer[strlen(dir->d_name)] = '\n';
-					sendto(sock,dir->d_name,strlen(dir->d_name),0,(struct sockaddr*)&remote,sizeof(remote));
+					sendto(sock,dir->d_name,strlen(dir->d_name)+1,0,(struct sockaddr*)&remote,sizeof(remote));
 				}
 				closedir(d);
 			}
