@@ -179,6 +179,13 @@ int main(int argc, char * argv[])
 			}
 			exit(0);
 		}
+		else
+		{
+			if ((sendto(sock, buffer, nbytes, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+			{
+				printf("unable to send socket");
+			}
+		}
 	}
 	close(sock);
 }
