@@ -131,6 +131,7 @@ int main(int argc, char * argv[])
 		{
 			FILE *fp;
 			char file[MAXBUFSIZE];
+			char buf[MAXBUFSIZE];
 			strncpy(file, buffer + 4, nbytes - 5);
 			fp = fopen(file, "r");
 			if (fp == NULL)
@@ -139,11 +140,11 @@ int main(int argc, char * argv[])
 			}
 			else
 			{
-				int bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+				int bytes_read = fread(writeBuf, sizeof(writeBuf[0]), MAXBUFSIZE, (FILE*)fp);
 				while (bytes_read>0)
 				{
 					buffer[0] = 1;
-					strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
+					strncpy(buffer + 1, writeBuf, MAXBUFSIZE);
 					while (1)
 					{
 						if ((nbytes = sendto(sock, buffer, bytes_read + 1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
@@ -154,8 +155,8 @@ int main(int argc, char * argv[])
 						}
 					}
 					bzero(buffer, sizeof(buffer));
-					bzero(sendBuf, sizeof(sendBuf));
-					bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+					bzero(writeBuf, sizeof(writeBuf));
+					bytes_read = fread(writeBuf, sizeof(writeBuf[0]), MAXBUFSIZE, (FILE*)fp);
 				}
 				fclose(fp);
 				while (1)
