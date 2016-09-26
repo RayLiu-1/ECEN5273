@@ -111,7 +111,7 @@ int main(int argc, char * argv[])
 		{
 			bzero(buffer,sizeof(buffer));
 			DIR *d;
-			sturct dirent *dir;
+			struct dirent *dir;
 			d = opendir(".");
 			if (d)
 			{
