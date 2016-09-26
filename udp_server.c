@@ -44,7 +44,6 @@ int main(int argc, char * argv[])
 	sin.sin_port = htons(atoi(argv[1]));        //htons() sets the port # to network byte order
 	sin.sin_addr.s_addr = INADDR_ANY;           //supplies the IP address of the local machine
 
-
 												//Causes the system to create a generic socket of type UDP (datagram)
 	if ((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
@@ -71,7 +70,7 @@ int main(int argc, char * argv[])
 		{
 			printf("unable to receive socket\n");
 		}
-		printf("The client says %s\n", buffer);
+		//printf("The client says %s\n", buffer);
 		char msg[] = "ACK";
 		if ((sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 		{
@@ -127,6 +126,49 @@ int main(int argc, char * argv[])
 			}
 			buffer[0] = 0;
 			sendto(sock,buffer,1,0,(struct sockaddr*)&remote,sizeof(remote));
+		}
+		else if(nbytes > 4 && strncmp(buffer, "get ", 4) == 0)
+		{
+			FILE *fp;
+			char file[MAXBUFSIZE];
+			strncpy(file, buffer + 4, nbytes - 5);
+			fp = fopen(file, "r");
+			if (fp == NULL)
+			{
+				puts("file do not exits");
+			}
+			else
+			{
+				int bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+				while (bytes_read>0)
+				{
+					buffer[0] = 1;
+					strncpy(buffer + 1, sendBuf, MAXBUFSIZE);
+					while (1)
+					{
+						if ((nbytes = sendto(sock, buffer, bytes_read + 1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+							printf("unable to send file");
+						if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+						{
+							break;
+						}
+					}
+					bzero(buffer, sizeof(buffer));
+					bzero(sendBuf, sizeof(sendBuf));
+					bytes_read = fread(sendBuf, sizeof(sendBuf[0]), MAXBUFSIZE, (FILE*)fp);
+				}
+				fclose(fp);
+				while (1)
+				{
+					bzero(buffer, sizeof(buffer));
+					if ((nbytes = sendto(sock, buffer,1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+						printf("unable to send file");
+					if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+					{
+						break;
+					}
+				}
+			}
 		}
 	}
 	close(sock);
