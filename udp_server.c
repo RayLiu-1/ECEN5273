@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
 					{
 						if ((nbytes = sendto(sock, buffer, bytes_read + 1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 							printf("unable to send file");
-						if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+						if (nbytes = recvfrom(sock, buf, sizeof(buf), 0,(struct sockaddr *)&remote, &remote_length) > 0)
 						{
 							break;
 						}
@@ -164,7 +164,7 @@ int main(int argc, char * argv[])
 					bzero(buffer, sizeof(buffer));
 					if ((nbytes = sendto(sock, buffer,1, 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
 						printf("unable to send file");
-					if (nbytes = recvfrom(sock, buf, sizeof(buf), 0, (struct sockaddr*)&from_addr, &addr_length) > 0)
+					if (nbytes = recvfrom(sock, buf, sizeof(buf), 0,(struct sockaddr *)&remote, &remote_length) > 0)
 					{
 						break;
 					}
