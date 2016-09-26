@@ -1,5 +1,5 @@
 all: server client
 
-server: udp_server.c
+server: server.c
 
-client: udp_client.c
+client: client.c
