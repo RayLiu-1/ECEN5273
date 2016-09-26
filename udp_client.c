@@ -132,22 +132,25 @@ int main(int argc, char * argv[])
 		}
 		if (bytes_command > 2 && strncmp(command, "ls", 2) == 0)
 		{
-			bzero(buffer,sizeof(buffer));
-			bzero(buf,sizeof(buf));
-			
-			nbytes = recvfrom(sock,buffer,sizeof(buffer),0,(struct sockaddr*)&from_addr, &addr_length);
-			if(nbytes<0)
+			while(1)
 			{
-				puts("unable to receive files list");
-			}
-			else
-			{
-				char msg[] = "ACK";
-				if ((nbytes = sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
-					printf("unable to send file");
-				if (buffer[0] == 0)
-					break;
-				puts(buffer);
+				bzero(buffer,sizeof(buffer));
+				bzero(buf,sizeof(buf));
+
+				nbytes = recvfrom(sock,buffer,sizeof(buffer),0,(struct sockaddr*)&from_addr, &addr_length);
+				if(nbytes<0)
+				{
+					puts("unable to receive files list");
+				}
+				else
+				{
+					char msg[] = "ACK";
+					if ((nbytes = sendto(sock, msg, sizeof(msg), 0, (struct sockaddr*)&remote, sizeof(remote))) < 0)
+						printf("unable to send file");
+					if (buffer[0] == 0)
+						break;
+					puts(buffer);
+				}
 			}
 			
 		}
