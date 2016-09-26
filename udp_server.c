@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
+#include <dirent.h> 
 /* You will have to modify the program below */
 
 #define MAXBUFSIZE 20000
@@ -106,7 +107,7 @@ int main(int argc, char * argv[])
 			fclose(fp);
 			puts("File is put");
 		}
-		else if(bytes_command > 2 && strncmp(command, "ls", 2) == 0)
+		else if(nbytes > 2 && strncmp(buffer, "ls", 2) == 0)
 		{
 			bzero(buffer,sizeof(buffer));
 			DIR *d;
